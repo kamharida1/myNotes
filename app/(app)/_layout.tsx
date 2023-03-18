@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { Platform, Pressable, Text } from "react-native";
 import { useAuth } from "../../context/auth";
 import { FontAwesome } from '@expo/vector-icons'
-import { NotesProvider } from "../../context/notes";
+import { Provider as NotesProvider } from "../../context/notes";
 
 export const unstable_settings = {
   initialRouteName: "index",

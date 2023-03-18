@@ -3,13 +3,14 @@ import { Link, useSearchParams } from "expo-router";
 import React, { useContext, useMemo } from "react";
 import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNotes } from "../../context/notes";
+import { Context, useNotes } from "../../context/notes";
 import {FontAwesome} from '@expo/vector-icons'
 
 export default function App() {
-  const { notes } = useNotes();
+  // const {notes}  = useNotes();
+  const { state, addNote } = useNotes();
   
-  if (!notes) {
+  if (!state) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator />
@@ -30,23 +31,24 @@ function Index() {
 }
 
 function useQueriedNotes() {
-  const notes = useNotes();
+  const { state: {notes}, addNote } = useNotes();
   const { q } = useSearchParams<{ q: string }>();
 
   return useMemo(
     () =>
-      notes.notes.filter((item) => {
+      notes.filter((item) => {
         if (!q) {
           return true;
         }
         return item.title.toLowerCase().includes(q?.toLowerCase());
       }),
-    [q, notes.notes]
+    [q, notes]
   );
 }
 
 function NotesList() {
-  const notes = useQueriedNotes();
+ // const notes = useQueriedNotes();
+  const { state, deleteNote } = useNotes();
   const { width } = useWindowDimensions();
   const innerWindow = width - 48;
   const insets = useSafeAreaInsets();
@@ -61,7 +63,7 @@ function NotesList() {
           paddingHorizontal: Math.max(20, insets.left + insets.right)
         }
       ]}
-      data={notes}
+      data={state}
       keyExtractor={(note) => note.title}
       renderItem={({ item }) => {
         return (
@@ -89,6 +91,7 @@ function NotesList() {
                     borderRadius: 12,
                     overflow: "hidden",
                     flex: 1,
+                    marginVertical: 12,
                   }}
                 >
                   <View
@@ -108,7 +111,7 @@ function NotesList() {
                   >
                     <View>
                       <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                        {item.title}
+                        {item.title} - {item.id}
                       </Text>
                       {item.content && (
                         <Text
@@ -123,11 +126,9 @@ function NotesList() {
                       )}
                     </View>
                     <View style={{ flexDirection: "row" }}>
-                      <FontAwesome
-                        name="chevron-right"
-                        size={16}
-                        color="#919497"
-                      />
+                      <Pressable onPress={() => deleteNote(item.id)}>
+                        <FontAwesome name="trash" size={24} color="#919497" />
+                      </Pressable>
                     </View>
                   </View>
                 </View>
@@ -140,6 +141,7 @@ function NotesList() {
     />
   )
 };
+
 
 function Footer() {
   const { left, bottom } = useSafeAreaInsets();
@@ -163,8 +165,8 @@ function Footer() {
         borderTopWidth: StyleSheet.hairlineWidth,
       }}
     >
-      {/* <Link href="/compose" asChild> */}
-        <Pressable onPress={() => addNote()}>
+      <Link href="/compose" asChild>
+        <Pressable>
           {({ hovered, pressed }) => (
             <View
               style={[
@@ -193,7 +195,7 @@ function Footer() {
             </View>
           )}
         </Pressable>
-      {/* </Link> */}
+      </Link>
     </View>
   );
 }

@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { useAsyncStorage } from "@react-native-async-storage/async-storage";
+import { useContext } from "react";
+import createDataContext from "./createDataContext";
 
 
 export type Note = {
@@ -14,27 +14,48 @@ type NotesContext = {
   // deleteNote: (id: string) => void;
 };
 
-const NotesContext = createContext<NotesContext | undefined>(undefined);
+const notesReducer = (state, action) => {
+  switch (action.type) {
+    case 'add_note':
+      return [...state, {
+        id: Math.floor(Math.random() * 9999),
+        title: `Blog Post #${state.length + 1}`
+      }];
+    case 'delete_note':
+      return state.filter((note) => note.id !== action.payload);
+    default:
+      return state;
+  }
+}
 
-export const NotesProvider = ({ children }: { children: React.ReactNode}) => {
-  const [notes, setNotes] = useState([]);
-
-  const addNote = () => {
-    setNotes([
-      ...notes,
-      { title: `New Note #${notes.length + 1}` }
-    ]);
-  };
-
-  return <NotesContext.Provider value={{notes, addNote}}>
-    {children}
-  </NotesContext.Provider>
+const addNote = dispatch => {
+  return () => {
+    dispatch({ type: "add_note" });
+  }
 };
 
-export const useNotes = () => {
-  const context = useContext(NotesContext);
-  if (!context) {
-    throw new Error("useNotes must be used within a NotesProvider");
+const deleteNote = dispatch => {
+  return (id) => {
+    dispatch({type: "delete_note", payload: id })
   }
-  return context;
+}
+
+export const { Context, Provider } = createDataContext(
+  notesReducer,
+  {
+    addNote,
+    deleteNote,
+  },
+  [
+    {id: '1', title: "New Blog Post", content: "Main Content"},
+    
+  ]
+);
+
+export const useNotes = () => {
+  const { state, addNote, deleteNote } = useContext(Context);
+  // if (!context) {
+  //   throw new Error("useNotes must be used within a NotesProvider");
+  // }
+  return { state, addNote, deleteNote };
 };
