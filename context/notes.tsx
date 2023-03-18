@@ -10,16 +10,23 @@ export type Note = {
 
 type NotesContext = {
   notes: Note[];
-  // addNote: (props: { text: string; content: string }) => void;
+  addNote: (props?: { title: string; content: string }) => void;
   // deleteNote: (id: string) => void;
 };
 
 const NotesContext = createContext<NotesContext | undefined>(undefined);
 
 export const NotesProvider = ({ children }: { children: React.ReactNode}) => {
-  const notes = [{ title: 'Notes describe #1' },{ title: 'Notes describe #2'}]
+  const [notes, setNotes] = useState([]);
 
-  return <NotesContext.Provider value={{notes}}>
+  const addNote = () => {
+    setNotes([
+      ...notes,
+      { title: `New Note #${notes.length + 1}` }
+    ]);
+  };
+
+  return <NotesContext.Provider value={{notes, addNote}}>
     {children}
   </NotesContext.Provider>
 };

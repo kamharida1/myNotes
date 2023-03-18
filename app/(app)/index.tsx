@@ -143,6 +143,7 @@ function NotesList() {
 
 function Footer() {
   const { left, bottom } = useSafeAreaInsets();
+  const { addNote } = useNotes();
 
   return (
     <View
@@ -162,8 +163,8 @@ function Footer() {
         borderTopWidth: StyleSheet.hairlineWidth,
       }}
     >
-      <Link href="/compose" asChild>
-        <Pressable>
+      {/* <Link href="/compose" asChild> */}
+        <Pressable onPress={() => addNote()}>
           {({ hovered, pressed }) => (
             <View
               style={[
@@ -192,7 +193,7 @@ function Footer() {
             </View>
           )}
         </Pressable>
-      </Link>
+      {/* </Link> */}
     </View>
   );
 }
