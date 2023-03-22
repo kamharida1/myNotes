@@ -1,5 +1,5 @@
 import { Slot } from "expo-router";
-import { Provider } from "../context/auth";
+import { Provider } from "../src/context/auth";
 
 export default function RootLayout() {
   return (
@@ -7,6 +7,5 @@ export default function RootLayout() {
     <>
       <Slot />
     </>
- 
-  )
+  );
 }

@@ -1,19 +1,20 @@
 import { Link, Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Platform, Pressable, Text } from "react-native";
-import { useAuth } from "../../context/auth";
-import { FontAwesome } from '@expo/vector-icons'
-import { Provider as NotesProvider } from "../../context/notes";
+import { useAuth } from "../../src/context/auth";
+import { FontAwesome } from "@expo/vector-icons";
+import { Provider } from "react-redux";
+import store from "../../src/app/store";
 
 export const unstable_settings = {
-  initialRouteName: "index",
+  initialRouteName: "post",
 };
 
 export default function AppLayout() {
   const router = useRouter();
 
   return (
-    <NotesProvider>
+    <Provider store={store}>
       <Stack
         screenOptions={{
           headerRight: SignOutbutton,
@@ -45,7 +46,7 @@ export default function AppLayout() {
           }}
         />
       </Stack>
-    </NotesProvider>
+    </Provider>
   );
 }
 
@@ -80,7 +81,7 @@ function SignOutbutton() {
         <FontAwesome name="sign-out" size={24} color="black" />
       </Pressable>
     </Link>
-  )
+  );
 }
 
 function DismissComposeButton() {
@@ -96,5 +97,5 @@ function DismissComposeButton() {
         Back
       </Text>
     </Link>
-  )
+  );
 }

@@ -1,22 +1,28 @@
 import { Text, View } from "@bacons/react-views";
 import { Link, useSearchParams } from "expo-router";
 import React, { useContext, useMemo } from "react";
-import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  useWindowDimensions,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Context, useNotes } from "../../context/notes";
-import {FontAwesome} from '@expo/vector-icons'
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function App() {
   // const {notes}  = useNotes();
-  const { state, addNote } = useNotes();
-  
-  if (!state) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
+  // const { state, addNote } = useNotes();
+
+  // if (!state) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <ActivityIndicator />
+  //     </View>
+  //   );
+  // }
 
   return <Index />;
 }
@@ -24,31 +30,55 @@ export default function App() {
 function Index() {
   return (
     <>
+      <Button />
       <NotesList />
       <Footer />
     </>
-  )
+  );
 }
 
-function useQueriedNotes() {
-  const { state: {notes}, addNote } = useNotes();
-  const { q } = useSearchParams<{ q: string }>();
+// function useQueriedNotes() {
+//   const {
+//     state: { notes },
+//     addNote,
+//   } = useNotes();
+//   const { q } = useSearchParams<{ q: string }>();
 
-  return useMemo(
-    () =>
-      notes.filter((item) => {
-        if (!q) {
-          return true;
-        }
-        return item.title.toLowerCase().includes(q?.toLowerCase());
-      }),
-    [q, notes]
+//   return useMemo(
+//     () =>
+//       notes.filter((item) => {
+//         if (!q) {
+//           return true;
+//         }
+//         return item.title.toLowerCase().includes(q?.toLowerCase());
+//       }),
+//     [q, notes]
+//   );
+// }
+
+function Button() {
+  return (
+    <View
+      style={{
+        position: "absolute",
+        width: "100%",
+        top: 300,
+        padding: 30,
+        zIndex: 200,
+      }}
+    >
+      <Link href="/post/" asChild>
+        <Pressable>
+          <Text>My Blog Post</Text>
+        </Pressable>
+      </Link>
+    </View>
   );
 }
 
 function NotesList() {
- // const notes = useQueriedNotes();
-  const { state, deleteNote } = useNotes();
+  // const notes = useQueriedNotes();
+  // const { state, deleteNote } = useNotes();
   const { width } = useWindowDimensions();
   const innerWindow = width - 48;
   const insets = useSafeAreaInsets();
@@ -60,11 +90,11 @@ function NotesList() {
         {
           maxWidth: 960,
           paddingVertical: 20,
-          paddingHorizontal: Math.max(20, insets.left + insets.right)
-        }
+          paddingHorizontal: Math.max(20, insets.left + insets.right),
+        },
       ]}
-      data={state}
-      keyExtractor={(note) => note.title}
+      data={[]}
+     // keyExtractor={(note) => note.title}
       renderItem={({ item }) => {
         return (
           <Link
@@ -136,16 +166,13 @@ function NotesList() {
             </Pressable>
           </Link>
         );
-        
       }}
     />
-  )
-};
-
+  );
+}
 
 function Footer() {
   const { left, bottom } = useSafeAreaInsets();
-  const { addNote } = useNotes();
 
   return (
     <View
@@ -166,7 +193,7 @@ function Footer() {
       }}
     >
       <Link href="/compose" asChild>
-        <Pressable>
+        <Pressable onPress={() => {}}>
           {({ hovered, pressed }) => (
             <View
               style={[
@@ -215,9 +242,7 @@ function ListEmptyComponent() {
         alignItems: "center",
       }}
     >
-      <Text style={{ fontSize: 16, textAlign: "center" }}>
-        {message}
-      </Text>
+      <Text style={{ fontSize: 16, textAlign: "center" }}>{message}</Text>
     </View>
   );
 }

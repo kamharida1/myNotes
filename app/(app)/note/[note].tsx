@@ -1,47 +1,25 @@
 import { StyleSheet, Text, View } from "@bacons/react-views";
 import { Stack, useRouter, useSearchParams } from "expo-router";
-import { useNotes } from "../../../context/notes";
-import { Button } from "../../../etc/button";
+import { Button } from "../../../src/etc/button";
 
 export default function Note() {
   const { note } = useSearchParams();
-  const { state, deleteNote } = useNotes();
+ 
   const router = useRouter();
-  console.log(state)
-  console.log(note)
-
-  const selected = state.find((item) => item.id === note);
-  console.log(selected)
-
-  if (!selected) {
-    return (
-      <>
-        <Stack.Screen options={{ title: "Not Found" }} />
-        <View style={styles.container}>
-          <View style={styles.main}>
-            <Text style={{ fontSize: 24 }}>
-              Cannot find note for ID: {note}
-            </Text>
-          </View>
-        </View>
-      </>
-    )
-  }
 
   return (
     <>
-      <Stack.Screen options={{ title: selected.id }} />
+      <Stack.Screen options={{ title: "Note"}} />
       <View style={styles.container}>
         <View style={styles.main}>
-          <Item title="Note">{selected.title}</Item>
-          <Item title="Content">{selected.content}</Item>
+          <Item title="Note">Title</Item>
+          <Item title="Content">Content</Item>
         </View>
 
-        <View style={{ flex: 1}}>
+        <View style={{ flex: 1 }}>
           <Button
             onPress={() => {
-              deleteNote(selected.id);
-              router.back();
+             
             }}
             buttonStyle={{ backgroundColor: "crimson" }}
           >
